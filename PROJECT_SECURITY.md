@@ -4,40 +4,40 @@
 
 ### 1. Authentication and Authorization
 - **Requirement**: Implement role-based access control for tenants, dietitians, and other users with least privilege access.
-- **Description**: Utilize OAuth 2.0 and JWT tokens to authenticate users and applications. Assign minimum required permissions based on user roles.
+- **Description**: Utilize mechanisms like OAuth 2.0 to authenticate users and assign appropriate access levels based on roles. Restrict access to sensitive data and APIs. 
 
 ### 2. Data Encryption
-- **Requirement**: Encrypt data in transit and at rest using industry standard algorithms. 
-- **Description**: Use TLS 1.2+ for transport encryption. Encrypt data stored in databases and cloud storage. 
+- **Requirement**: Encrypt sensitive data in transit and at rest. 
+- **Description**: Use TLS for data in transit. Encrypt sensitive data like health information stored in databases or object storage using AES-256 or similar strong encryption.
 
-### 3. Input Validation
+### 3. Input Validation  
 - **Requirement**: Validate and sanitize all inputs from clients before processing.
-- **Description**: Implement input validation and sanitization to prevent code injection, XSS, SQLi, etc. 
+- **Description**: Implement input validation and sanitization to prevent issues like SQL injection, XSS, etc. 
 
-### 4. Secure API Design 
-- **Requirement**: Design secure REST APIs using security best practices.
-- **Description**: Use HTTPS, rate limiting, input validation, proper authentication and authorization etc.
+### 4. Secure Configuration
+- **Requirement**: Use secure configuration for network, servers, databases etc.
+- **Description**: Follow security best practices for AWS, network security groups, server hardening, database security etc.
 
-### 5. Logging and Monitoring
-- **Requirement**: Implement robust logging, monitoring, and alerting.
-- **Description**: Logs access, errors, and anomalies. Set up alerts for suspicious activities.
+### 5. Data Privacy
+- **Requirement**: Protect personal and health data of customers as per regulations.  
+- **Description**: Implement data privacy controls aligned to regulations like HIPAA. Get appropriate consent before collecting or sharing data. 
 
-### 6. Vulnerability Management
-- **Requirement**: Continuously scan for vulnerabilities and remediate.
-- **Description**: Regularly scan for vulnerabilities in code, dependencies, infrastructure, and configurations. Remediate based on severity.
+### 6. Access Logging 
+- **Requirement**: Log access to sensitive data and APIs.
+- **Description**: Implement detailed logging for access to sensitive data and APIs. Retain logs for auditing.
 
-### 7. Access Control
-- **Requirement**: Restrict access to systems and data on a need to know basis. 
-- **Description**: Implement least privilege access control through permissions, roles, and security groups.
+### 7. Vulnerability Management
+- **Requirement**: Continuously identify and remediate vulnerabilities.
+- **Description**: Perform scans, upgrade software regularly, patch vulnerabilities through a vulnerability management program.
 
-### 8. Secure Configuration
-- **Requirement**: Securely configure operating systems, networks, databases etc. 
-- **Description**: Harden configurations as per industry standards and best practices.
+### 8. Incident Response 
+- **Requirement**: Detect security incidents and have an incident response plan.
+- **Description**: Put monitoring and alerts to detect issues. Have an IR plan to respond to incidents.
 
-### 9. Incident Response 
-- **Requirement**: Define an incident response and disaster recovery plan.
-- **Description**: Document playbooks for security incidents and disasters. Conduct regular incident response training.
+### 9. Secure SDLC
+- **Requirement**: Incorporate security across software development lifecycle.
+- **Description**: Build security into design, development, testing, deployment and maintenance stages.
 
-### 10. Privacy by Design
-- **Requirement**: Implement privacy by design principles for handling personal data.
-- **Description**: Minimize data collection, anonymize data, encrypt data, and securely delete data when no longer necessary.
+### 10. Third Party Risk Management
+- **Requirement**: Manage risks from third party services like OpenAI.
+- **Description**: Perform due diligence on third party security and privacy controls. Have contractual clauses to mitigate risks.
