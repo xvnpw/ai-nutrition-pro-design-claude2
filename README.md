@@ -25,7 +25,7 @@ Workflow can directly push into repository or create pull request. User Stories 
 
 | Name | File | Description | Security artefact | Output | 
 | --- | --- | --- | --- | --- |
-| Project description | [PROJECT.md](./PROJECT.md) | High level description of the project with business explanation and listed core features | High level security design review | [PROJECT_SECURITY.md](./PROJECT_SECURITY.md) and as [pull request](https://github.com/xvnpw/ai-nutrition-pro-design-claude2/pull/2) |
+| Project description | [PROJECT.md](./PROJECT.md) | High level description of the project with business explanation and listed core features | High level security design review | [PROJECT_SECURITY.md](./PROJECT_SECURITY.md) and as [pull request](https://github.com/xvnpw/ai-nutrition-pro-design-claude2/pull/1) |
 | Architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) | Architecture of the solution | Threat Modelling | [ARCHITECTURE_SECURITY.md](./ARCHITECTURE_SECURITY.md) |
 | User stories | [user-stories/*](./user-stories/) <br/> also in [issues](https://github.com/xvnpw/ai-nutrition-pro-design-claude2/issues?q=is%3Aopen+is%3Aissue+label%3Aai-threat-modeling) | Technical and user stories to implement | Security related acceptance criteria | [user-stories/*_SECURITY.md](./user-stories/) <br/> also in [issues](https://github.com/xvnpw/ai-nutrition-pro-design-claude2/issues?q=is%3Aopen+is%3Aissue+label%3Aai-threat-modeling) - as comment |
 
