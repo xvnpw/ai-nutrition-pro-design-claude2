@@ -1,6 +1,6 @@
 # Store diet introductions
 
-As Meal App, I want to store samples of diet introductions of dietitians, so that those can be later used to generate new diet introductions using ChatGPT.
+As Meal App, I want to store samples of diet introductions of dietitians, so that those can be later used to generate new diet introductions using ChatGPT..
 
 ## Diagram
 
