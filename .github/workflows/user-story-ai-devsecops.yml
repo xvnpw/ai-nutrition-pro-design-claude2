@@ -1,0 +1,48 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'user-stories/*.md'
+      - '!user-stories/*_SECURITY.md'
+
+jobs:
+  user_story_ai_devsecops_job:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    name: Run ai threat modeling action for user story analysis
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Check which files were changed
+        id: files_check
+        uses: lots0logs/gh-action-get-changed-files@2.2.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Printing
+        run: |
+          echo "${{ steps.files_check.outputs.all }}"
+      - name: Generate user story security acceptance criteria
+        uses: xvnpw/ai-threat-modeling-action@v1.1.4
+        with:
+          type: 'user-story'
+          provider: 'openrouter'
+          model: 'anthropic/claude-2'
+          input_files: "${{ steps.files_check.outputs.all }}"
+          input_architecture_files: '["ARCHITECTURE.md"]'
+          input_architecture_threat_model_file: "ARCHITECTURE_SECURITY.md"
+          temperature: 0.2
+          verbose: true
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'User stories: security acceptance criteria'
+          add: 'user-stories/'
+          pull: '--rebase --autostash'

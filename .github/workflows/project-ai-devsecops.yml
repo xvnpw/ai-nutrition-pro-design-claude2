@@ -1,0 +1,49 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'PROJECT.md'
+  workflow_dispatch:
+
+jobs:
+  project_ai_devsecops_job:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+      pull-requests: write
+
+    name: Run ai threat modeling action for project analysis
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Generate project security requirements
+        uses: xvnpw/ai-threat-modeling-action@v1.1.4
+        with:
+          type: 'project'
+          provider: 'openrouter'
+          model: 'anthropic/claude-2'
+          input_files: '["PROJECT.md"]'
+          output_file: 'PROJECT_SECURITY.md'
+          temperature: 0.2
+          verbose: true
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: create-pull-request/project
+          title: (AI Generated) High Level Security and Privacy Requirements
+          body: Automated pull request based on your changes to project. Please review it carefully.
+          labels: 'security, ai'
+      # Uncomment if you want directly push into repo instead of Pull Request
+      # and comment 'Create Pull Request' step
+      # - name: Commit changes
+      #   uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: 'Project security requirements'
+      #     add: 'PROJECT_SECURITY.md'
+      #     pull: '--rebase --autostash'

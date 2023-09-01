@@ -1,0 +1,64 @@
+name: Run ai threat modeling action for user story in issue analysis
+on:
+  issues:
+    types:
+      - labeled
+      - edited
+
+jobs:
+  user_story_issue_ai_devsecops:
+    name: Run ai threat modeling action for user story in issue analysis
+    if: contains(github.event.issue.labels.*.name, 'ai-threat-modeling')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - uses: actions/github-script@v6
+        id: set-result
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            const issue = await github.rest.issues.get({
+              issue_number: ${{ github.event.issue.number }},
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+            });
+            const body = issue.data.body;
+            const fs = require('fs');
+            fs.writeFile('${{ github.workspace }}/issue_body.md', body, (err) => {
+                if (err) throw err;
+                console.log('Data written to file');
+            });
+            return JSON.stringify(body);
+      - name: Generate user story security acceptance criteria
+        uses: xvnpw/ai-threat-modeling-action@v1.1.4
+        with:
+          type: 'user-story'
+          provider: 'openrouter'
+          model: 'anthropic/claude-2'
+          input_files: '["issue_body.md"]'
+          input_architecture_files: '["ARCHITECTURE.md"]'
+          input_architecture_threat_model_file: "ARCHITECTURE_SECURITY.md"
+          temperature: 0.2
+          verbose: true
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: (AI Generated) Security Related Acceptance Criteria
+      - name: Add comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.issue.number }}
+          body-path: ${{ github.workspace }}/issue_body_SECURITY.md
+          edit-mode: replace
