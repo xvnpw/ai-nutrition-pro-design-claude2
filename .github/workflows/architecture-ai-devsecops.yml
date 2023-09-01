@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Generate architecture threat model
-        uses: xvnpw/ai-threat-modeling-action@v1.1.4
+        uses: xvnpw/ai-threat-modeling-action@v1.2.1
         with:
           type: 'architecture'
           provider: 'openrouter'
