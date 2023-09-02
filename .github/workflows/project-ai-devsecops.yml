@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Generate project security requirements
-        uses: xvnpw/ai-threat-modeling-action@v1.2.4
+        uses: xvnpw/ai-threat-modeling-action@v1.2.6
         with:
           type: 'project'
           provider: 'openrouter'

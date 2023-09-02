@@ -36,7 +36,7 @@ jobs:
             });
             return JSON.stringify(body);
       - name: Generate user story security acceptance criteria
-        uses: xvnpw/ai-threat-modeling-action@v1.2.4
+        uses: xvnpw/ai-threat-modeling-action@v1.2.6
         with:
           type: 'user-story'
           provider: 'openrouter'
