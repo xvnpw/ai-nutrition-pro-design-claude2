@@ -1,47 +1,30 @@
 # (AI Generated) Architecture Threat Model
 
-### Data flow 1: Meal Planner application manager -> Web Control Plane
+### Data flow 1: Meal Planner -> API Gateway
 
 | Threat Id | Component name | Threat Name | STRIDE category | Explanation | Mitigations | Risk severity |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Meal Planner application manager | Malicious employee intentionally provides invalid configuration or billing data to disrupt service | Spoofing | This is an insider threat that is not fully mitigated by current architecture | Implement role-based access control and auditing to detect anomalies. Provide employee training on security policies. | High |
-| 2 | Web Control Plane | Web Control Plane does not properly validate input data, allowing injection attacks on backend database | Tampering | Input validation threats are partially mitigated by API Gateway, but additional protections may be needed | Implement input validation and sanitization in Web Control Plane before storing data | Medium |
-| 3 | Network | Network traffic between Meal Planner application manager and Web Control Plane is intercepted and data is exposed | Information Disclosure | This threat is mitigated by use of HTTPS encryption | Ensure HTTPS with updated TLS version is used for all connections | Low |
+| 1 | Meal Planner | Attacker performs SQL injection on Meal Planner and extracts sensitive data from API Gateway | Spoofing | This threat is mitigated because all user inputs are sanitized before being passed to the API Gateway | Input validation and sanitization | Low |
+| 2 | Meal Planner | Attacker bypasses authentication in Meal Planner and makes unauthorized requests to API Gateway | Spoofing | This threat is applicable because authentication has not been implemented in Meal Planner yet | Implement authentication and authorization in Meal Planner | High |
+| 3 | Network | Attacker intercepts traffic between Meal Planner and API Gateway and steals sensitive information | Information Disclosure | This threat is mitigated because all traffic is encrypted using HTTPS | Use HTTPS for encryption | Low |
 
 
-### Data flow 2: Administrator -> Web Control Plane
-
-| Threat Id | Component name | Threat Name | STRIDE category | Explanation | Mitigations | Risk severity |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Web Control Plane | Administrator may send malicious requests to gain unauthorized access | Spoofing | This threat is mitigated by authentication and authorization controls | Enforce role-based access control and audit logging of admin actions | Medium |
-| 2 | Web Control Plane | Administrator may send excessive requests to cause denial of service | Denial of Service | This threat is partially mitigated by rate limiting | Implement additional rate limiting and alerting specifically for admin requests | Medium |
-| 3 | Web Control Plane | Administrator may access configuration data they are not authorized to view | Information Disclosure | This threat is mitigated by access controls and encryption | Enforce principle of least privilege access control for admin roles | Low |
-
-
-### Data flow 3: App Onboarding Manager -> Web Control Plane
+### Data flow 2: API Gateway -> API Application
 
 | Threat Id | Component name | Threat Name | STRIDE category | Explanation | Mitigations | Risk severity |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Web Control Plane | Attacker intercepts insecure communication between App Onboarding Manager and Web Control Plane to steal credentials | Spoofing | This threat is mitigated because communication is over TLS | Use mutual TLS for authentication and encryption of communication | Low |
-| 2 | Web Control Plane | Attacker performs SQL injection on Web Control Plane to extract sensitive data from database | Tampering | This threat is partially mitigated because input validation and parametrized queries are used. However, additional protections can be added. | Implement WAF rules to filter SQL injection attempts before reaching application. Use ORM or prepared statements. | Medium |
-| 3 | Web Control Plane | Excessive requests from App Onboarding Manager overwhelms Web Control Plane, causing denial of service | Denial of Service | This threat is mitigated because API Gateway has rate limiting | Tune rate limiting rules at API Gateway. Implement auto-scaling at ECS. | Low |
+| 1 | API Gateway | Attacker bypasses authentication in API Gateway and gains unauthorized access to API Application | Spoofing | API Gateway should implement proper authentication and authorization | Implement strong authentication in API Gateway. Use OAuth2.0 or API Keys. | High |
+| 2 | API Gateway | Attacker sends malformed input to API Application causing buffer overflow | Tampering | API Gateway should filter and validate input | Implement input validation and filtering in API Gateway | Medium |
+| 3 | Network | Attacker intercepts traffic between API Gateway and API Application and steals sensitive data | Information Disclosure | Network traffic should be encrypted | Use TLS for traffic between API Gateway and API Application | High |
+| 4 | API Application | API Application has vulnerability that allows RCE when exploited by attacker sending crafted input via API Gateway | Tampering | Proper input validation in API Gateway and hardening of API Application | Filter and validate input in API Gateway. Harden API Application, keep dependencies up-to-date. | Critical |
 
 
-### Data flow 4: API Application -> API database
-
-| Threat Id | Component name | Threat Name | STRIDE category | Explanation | Mitigations | Risk severity |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | API Application | Attacker exploits SQL injection vulnerability in API Application to read or modify sensitive data in API database | Tampering | This is applicable because user input is used to build SQL queries | Use ORM or prepared statements to prevent SQL injection | High |
-| 2 | API Application | Attacker exploits command injection vulnerability in API Application to execute arbitrary commands on the database server | Tampering | This is applicable if user input is passed to command line calls without proper validation and sanitization | Validate and sanitize all user input before passing it to command line calls | High |
-| 3 | API Application | Excessive logging from API Application causes denial of service on API database | Denial of Service | This is applicable if logging is not rate limited | Implement rate limiting on logging | Medium |
-
-
-### Data flow 5: Web Control Plane -> Control Plane Database
+### Data flow 3: API Application -> API database
 
 | Threat Id | Component name | Threat Name | STRIDE category | Explanation | Mitigations | Risk severity |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Web Control Plane | Elevation of privilege due to weak authentication allows attacker to gain unauthorized access | Spoofing | Web Control Plane authenticates to database, so this threat is applicable | Enforce strong authentication between Web Control Plane and Control Plane Database using TLS mutual authentication | High |
-| 2 | Control Plane Database | SQL injection allows attacker to extract sensitive data from database | Tampering | Web Control Plane sends SQL queries to database, so SQL injection is possible | Validate and sanitize all SQL queries before sending to database | High |
-| 3 | Network | Man-in-the-middle attack allows attacker to intercept traffic between Web Control Plane and Control Plane Database | Information Disclosure | Traffic goes over network, so MITM is possible | Enforce TLS between Web Control Plane and Control Plane Database | Medium |
+| 1 | API Application | Attacker exploits vulnerability in API Application to execute arbitrary code and access API database | Tampering | This threat is mitigated by security testing and patching of API Application | Perform security testing, code reviews, and use infrastructure as code for API Application deployment. Follow security best practices for Golang. Apply security patches in a timely manner. | High |
+| 2 | API database | Attacker exploits vulnerability in API database to gain unauthorized data access | Information Disclosure | This threat is partially mitigated by database access controls and encryption. However, vulnerabilities may exist. | Use database encryption and access controls. Perform security testing and apply patches for API database. Restrict database network access. | High |
+| 3 | Network | Attacker intercepts traffic between API Application and API database to steal or manipulate data | Tampering | This is mitigated by use of TLS for encryption. | Continue using TLS for encryption between API Application and API database. | Medium |
 
 
