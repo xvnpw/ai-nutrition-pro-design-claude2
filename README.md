@@ -1,3 +1,5 @@
+⚠️ This repository is deprecated and will be archived.
+
 # Experiment AI Nutrition-Pro
 
 > ⚠️ This is experimental project. It has nothing to do with any existing or future real project. Its name is fake and not related to any existing product or company. It's only for educational purposes.
